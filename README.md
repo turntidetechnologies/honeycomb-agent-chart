@@ -105,7 +105,32 @@ for example) and sending a Pull Request to Honeycomb.  They also have
 a premium support option.
 
 [honeycomb-k8s-agent]: https://docs.honeycomb.io/getting-data-in/integrations/kubernetes/
-[determine-log-pattern]: https://github.com/honeycombio/honeycomb-kubernetes-agent/blob/201433f111ec16c31a3316308707513de8bf6d53/podtailer/podtailer.go#L161
+[determineLogPattern]: https://github.com/honeycombio/honeycomb-kubernetes-agent/blob/201433f111ec16c31a3316308707513de8bf6d53/podtailer/podtailer.go#L161
 [agent-configuration]: https://github.com/honeycombio/honeycomb-kubernetes-agent#production-ready-use
 [dataset-best-practices]: https://docs.honeycomb.io/getting-data-in/best-practices/
 [honeycomb-k8s-agent-quickstart]: https://honeycomb.io/download/kubernetes/logs/quickstart.yaml
+
+## Author and License
+
+Initial version written by Sam Vilain.
+
+Copyright (c) 2019, Software Motor Company.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
