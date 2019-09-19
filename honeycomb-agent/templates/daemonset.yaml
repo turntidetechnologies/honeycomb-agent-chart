@@ -1,0 +1,78 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    k8s-app: honeycomb-agent
+    kubernetes.io/cluster-service: 'true'
+    version: v{{ .Chart.Version }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ .Chart.Name }}
+        kubernetes.io/cluster-service: 'true'
+        version: v{{ .Chart.Version }}
+        chart: {{ include "honeycomb-agent.chart" . | quote }}
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        {{- if .Values.labels }}
+{{ toYaml .Values.labels | indent 8 }}
+        {{- end }}
+      {{- if .Values.annotations }}
+      annotations:
+{{ toYaml .Values.annotations | indent 8 }}
+      {{- end }}
+    spec:
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+      containers:
+      - env:
+        - name: HONEYCOMB_WRITEKEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: {{ include "writekey-secret-name" . }}
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: honeycombio/honeycomb-kubernetes-agent:{{ .Chart.Version }}
+        imagePullPolicy: IfNotPresent
+        name: honeycomb-agent
+        {{- if .Values.resources }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: "/etc/honeycomb"
+          name: config
+          readOnly: false
+        - mountPath: "/var/log"
+          name: varlog
+          readOnly: false
+        - mountPath: "/var/lib/docker/containers"
+          name: varlibdockercontainers
+          readOnly: true
+      serviceAccountName: {{ include "service-account-name" . }}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: {{ include "config-map-name" . }}
+        name: config
+      - hostPath:
+          path: "/var/log"
+        name: varlog
+      - hostPath:
+          path: "/var/lib/docker/containers"
+        name: varlibdockercontainers

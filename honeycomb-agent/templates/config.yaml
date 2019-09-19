@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "config-map-name" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |-
+    verbosity: {{ if .Values.honeycomb.logLevel }}{{ .Values.honeycomb.logLevel }}{{ else }}info{{ end }}
+    legacyLogPaths: {{ .Values.honeycomb.legacyLogPaths }}
+    {{- if .Values.honeycomb.additionalFields }}
+    additionalFields:
+{{ toYaml .Values.honeycomb.additionalFields | indent 6 }}
+    {{- end }}
+    watchers:
+      {{- range $group, $watchers := .Values.honeycomb.watchers }}{{- range $watchers }}
+      -
+        dataset: {{ if .dataset }}{{ .dataset | quote }}{{ else }}{{ $group | quote }}{{ end }}
+        {{- if .parser }}
+        parser: {{ .parser | quote }}
+        {{- end }}
+        {{- if .namespace }}
+        namespace: {{ quote .namespace }}
+        {{- end }}
+        labelSelector: {{/* significant space precedes */}}
+          {{- if .labelSelector }}{{ quote .labelSelector }}
+          {{- else if .selector }}{{ include "labelSelector" .selector | quote }}
+          {{- else }}""{{ end }}
+        {{- if .paths }}
+        paths:
+{{ toYaml .paths | indent 10 }}
+        {{- end }}
+        {{- if .containerName }}
+        containerName: {{ quote .containerName }}
+        {{- end }}
+        {{- if .processors }}
+        processors:
+{{ toYaml .processors | indent 10 }}
+        {{- end }}
+      {{- end }}{{- end }}

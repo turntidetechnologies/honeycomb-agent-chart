@@ -1,0 +1,47 @@
+
+honeycomb:
+  enabled: true
+
+  verbosity: info  # agent log level
+  additionalFields: {} # fixed fields to add from every event from the cluster
+
+  # Set 'legacyLogPaths' for Kubernetes 1.13 and below
+  # legacyLogPaths: true
+
+  watchers:
+    # populate configuration as needed - the keys here are so that
+    # your various values files can merge happily, and are also used
+    # as the default dataset name.
+    kubernetes:
+      - namespace: kube-system
+        labelSelector: "k8s-app=kube-apiserver"
+        parser: glog
+      - namespace: kube-system
+        labelSelector: "k8s-app=kube-scheduler"
+        parser: glog
+      - namespace: kube-system
+        labelSelector: "k8s-app=kube-controller-manager"
+        parser: glog
+      - namespace: kube-system
+        labelSelector: "k8s-app=kube-proxy"
+        parser: glog
+      - namespace: kube-system
+        labelSelector: "k8s-app=dns-controller"
+        parser: glog
+
+    honeycomb-agent:
+      - namespace: honeycomb
+        labelSelector: "k8s-app=honeycomb-agent"
+        parser: keyval
+        processors:
+          - timefield:
+              field: time
+              format: "2006-01-02T15:04:05Z07:00"
+
+resources:
+  requests:
+    cpu: 1m    # almost always schedule
+    memory: 100Mi
+  limits:
+    cpu: 500m  # don't let a runaway loop eat too much CPU
+    memory: 200Mi
